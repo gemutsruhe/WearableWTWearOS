@@ -88,13 +88,14 @@ public class MainActivity extends AppCompatActivity {
         trainingIdList.add("PullUp");
         trainingIdList.add("LatPullDown");
         trainingIdList.add("startTraining");
+        trainingRecord = new ArrayList<>();
 
-        nextTraining();
-        Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_SHORT).show();
         permission();
-        selectBluetoothDevice();
+        //selectBluetoothDevice();
+        nextTraining();
 
-        Bluetooth bluetooth = new Bluetooth(getApplicationContext(), selectedDeviceAddress, null);
+        /*Bluetooth bluetooth = new Bluetooth(getApplicationContext(), selectedDeviceAddress, null);
+
         bluetooth.scanDevices();
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        });
+        });*/
 
         nextTraining.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     finishTraining();
                 }
-                if(nextTrainingIndex == trainingIdList.size() - 2) {
+                if(nextTrainingIndex == trainingIdList.size() - 1) {
                     nextTraining.setText("운동 종료");
                 }
             }
@@ -226,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void nextTraining(){
         String trainingId = trainingIdList.get(nextTrainingIndex);
+        trainingRecord.add(new ArrayList<>());
 
         Bitmap resized = DataProcessing.getTrainingImage(this, trainingId);
         trainingImageView.setImageBitmap(resized);
@@ -240,13 +242,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void finishTraining() {
         ArrayList<String> trainingRecordList = new ArrayList<>();
-        for(int i = 0; i < trainingIdList.size(); i++) {
+        for(int i = 0; i < trainingIdList.size() - 1; i++) {
             for(int j = 0; j < trainingRecord.get(i).size(); j++) {
                 String data = trainingIdList.get(i) + "," + i + "," + j + "," + trainingRecord.get(j);
                 trainingRecordList.add(data);
             }
         }
-        Bluetooth bluetooth = new Bluetooth(this, selectedDeviceAddress, trainingRecordList);
+        //Bluetooth bluetooth = new Bluetooth(this, selectedDeviceAddress, trainingRecordList);
     }
 
     public void selectBluetoothDevice() {
@@ -259,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
         devices = bluetoothAdapter.getBondedDevices();
 
         if (address != null && selectDevice(address)) {
-
+            selectedDeviceAddress = address;
         } else {
 
             int pairedDeviceCount = devices.size();

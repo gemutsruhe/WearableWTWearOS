@@ -63,11 +63,12 @@ public class Bluetooth {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
+
             if (connected == false && result.getDevice().getAddress().compareTo(selectedDeviceAddress) == 0) {
                 connected = true;
                 connGATT(context, result.getDevice());
-
-            } else return;
+                Log.e("TEST", "Connected");
+            }
 
         }
     };
@@ -89,8 +90,10 @@ public class Bluetooth {
         scanning = true;
         scanner.startScan(callback);
     }
-    public void connGATT(Context context, BluetoothDevice device) {
+    public boolean connGATT(Context context, BluetoothDevice device) {
         gatt = device.connectGatt(context, false, gattCallback);
+        if(gatt != null) return true;
+        else return false;
     }
 
     public void disconnectGATT() {
